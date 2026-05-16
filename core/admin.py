@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Categoria, Localizacao, Item
+
+admin.site.unregister(Group)
 
 admin.site.site_header = 'Achados e Perdidos — UFLA'
 admin.site.site_title = 'Achados e Perdidos'

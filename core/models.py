@@ -7,11 +7,19 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+    class Meta:
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorias'
+
 class Localizacao(models.Model):
     nome = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nome
+
+    class Meta:
+        verbose_name = 'Localização'
+        verbose_name_plural = 'Localizações'
 
 class Item(models.Model):
     TIPO_CHOICES = [('perdido', 'Perdido'), ('encontrado', 'Encontrado')]
@@ -29,3 +37,7 @@ class Item(models.Model):
 
     def __str__(self):
         return f"[{self.tipo}] {self.titulo}"
+
+    class Meta:
+        verbose_name = 'Item'
+        verbose_name_plural = 'Itens'
