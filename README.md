@@ -1,32 +1,35 @@
-# 🎒 Achados e Perdidos — Campus UFLA
+# Achados e Perdidos - Campus UFLA
 
 Sistema web para registro e gerenciamento de itens achados e perdidos no campus da Universidade Federal de Lavras (UFLA).
 
-> Projeto desenvolvido para a disciplina **Programação WEB (GAC116)** — UFLA, 2026/1
+Projeto desenvolvido para a disciplina **Programação Web (GAC116)** - UFLA, 2026/1.
 
 ---
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
-O **Achados e Perdidos Campus** é uma aplicação web desenvolvida com Django que permite que estudantes, professores e funcionários registrem itens perdidos ou encontrados no campus, facilitando a devolução dos pertences aos seus donos.
+O Achados e Perdidos Campus é uma aplicação web desenvolvida com Django que permite que estudantes, professores e funcionários registrem itens perdidos ou encontrados no campus, facilitando a devolução dos pertences aos seus donos.
 
----
-
-## 🚀 Tecnologias Utilizadas
-
-- **Python 3.12**
-- **Django 5.x**
-- **HTML5 / CSS3**
-- **SQLite** (banco de dados padrão para desenvolvimento)
+Cada registro conta com título, descrição, categoria, localização, tipo (perdido ou encontrado), status (aberto ou resolvido) e foto opcional. O sistema possui um painel administrativo protegido por login para gerenciamento dos dados.
 
 ---
 
-## 📁 Estrutura do Projeto
+## Tecnologias Utilizadas
+
+- Python 3.10+
+- Django 5.x
+- Bootstrap 5
+- django-jazzmin
+- SQLite
+
+---
+
+## Estrutura do Projeto
 
 ```
 achados-perdidos-campus/
-├── core/               # App principal (models, views, urls, templates)
-├── docs/               # Documentação do projeto
+├── core/               # App principal (models, admin, templates)
+├── docs/               # Documentação do projeto (diagrama ER)
 ├── setup/              # Configurações do Django (settings, urls, wsgi)
 ├── manage.py           # Utilitário de linha de comando do Django
 ├── requirements.txt    # Dependências do projeto
@@ -35,66 +38,66 @@ achados-perdidos-campus/
 
 ---
 
-## ⚙️ Como Rodar o Projeto
+## Modelo de Dados
+
+O banco de dados é composto por três tabelas principais, além da tabela de usuários fornecida pelo Django:
+
+- **User** (Django) - representa o usuário que publica um registro
+- **Categoria** - classifica o tipo do item (ex: Eletrônico, Documento, Roupa)
+- **Localizacao** - indica onde o item foi perdido ou encontrado (ex: Biblioteca, Bloco A, Cantina)
+- **Item** - tabela central do sistema, com relacionamentos para Categoria, Localizacao e User
+
+O diagrama entidade-relacionamento está disponível em `docs/`.
+
+---
+
+## Como Rodar o Projeto
 
 ### Pré-requisitos
 
-- Python 3.12+
+- Python 3.10+
 - pip
+- Git
 
 ### Instalação
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/marina-hermogenes/achados-perdidos-campus.git
-   cd achados-perdidos-campus
-   ```
+1. Clone o repositório:
 
-2. **Crie e ative um ambiente virtual:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate      # Linux/Mac
-   venv\Scripts\activate         # Windows
-   ```
+```bash
+git clone https://github.com/marina-hermogenes/achados-perdidos-campus.git
+cd achados-perdidos-campus
+```
 
-3. **Instale as dependências:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Instale as dependências:
 
-4. **Aplique as migrações:**
-   ```bash
-   python manage.py migrate
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-5. **Inicie o servidor de desenvolvimento:**
-   ```bash
-   python manage.py runserver
-   ```
+3. Aplique as migrações:
 
-6. Acesse em: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+```bash
+python manage.py migrate
+```
 
----
- 
-## 🔑 Primeiro Acesso
- 
-Para acessar o painel administrativo, crie um superusuário:
- 
+4. Crie um superusuário para acessar o painel administrativo:
+
 ```bash
 python manage.py createsuperuser
 ```
- 
-Preencha os dados solicitados (usuário, e-mail e senha) e acesse:
- 
-👉 [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
- 
+
+5. Inicie o servidor de desenvolvimento:
+
+```bash
+python manage.py runserver
+```
+
+6. Acesse em: http://127.0.0.1:8000/admin
+
 ---
 
-## 👥 Contribuidores
+## Contribuidoras
 
-Desenvolvido pelas estudantes:
 - Ana Clara Carvalho Nascimento
 - Isadora Gomes Melo Cunha
 - Marina Hermógenes Siqueira
-
----
