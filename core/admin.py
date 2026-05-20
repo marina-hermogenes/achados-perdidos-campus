@@ -1,17 +1,16 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group
 from .models import Categoria, Localizacao, Item
 
-admin.site.unregister(Group)
-
-admin.site.site_header = 'Achados e Perdidos — UFLA'
-admin.site.site_title = 'Achados e Perdidos'
-admin.site.index_title = 'Painel Administrativo'
+class ItemInline(admin.TabularInline):
+    model = Item
+    fields = ('titulo', 'tipo', 'status', 'localizacao')
+    extra = 0
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('id', 'nome')
     search_fields = ('nome',)
+    inlines = [ItemInline]
 
 @admin.register(Localizacao)
 class LocalizacaoAdmin(admin.ModelAdmin):
@@ -22,4 +21,4 @@ class LocalizacaoAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'tipo', 'status', 'categoria', 'localizacao', 'autor', 'data')
     list_filter = ('tipo', 'status', 'categoria')
-    search_fields = ('titulo',)
+    search_fields = ('titulo', 'descricao')
