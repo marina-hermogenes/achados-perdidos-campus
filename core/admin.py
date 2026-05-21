@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Categoria, Localizacao, Item
+
+admin.site.unregister(Group)
 
 class ItemInline(admin.TabularInline):
     model = Item
