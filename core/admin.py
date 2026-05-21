@@ -6,8 +6,10 @@ admin.site.unregister(Group)
 
 class ItemInline(admin.TabularInline):
     model = Item
-    fields = ('titulo', 'tipo', 'status', 'localizacao')
+    fields = ('titulo', 'tipo', 'status', 'localizacao', 'categoria')
+    readonly_fields = ('titulo', 'tipo', 'status', 'localizacao', 'categoria')
     extra = 0
+    can_delete = False
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
@@ -19,6 +21,7 @@ class CategoriaAdmin(admin.ModelAdmin):
 class LocalizacaoAdmin(admin.ModelAdmin):
     list_display = ('id', 'nome')
     search_fields = ('nome',)
+    inlines = [ItemInline]
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
