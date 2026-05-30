@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+    --roxo:#6D28D9;
+    --roxo-claro:#8B5CF6;
+    --fundo:#F8F7FF;
+    --texto:#1F2937;
+    --cinza:#6B7280;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+}
+
+/* HERO */
+
+.hero{
+    background:
+    radial-gradient(
+        circle at top right,
+        rgba(139,92,246,.25),
+        transparent 30%
+    ),
+    linear-gradient(
+        135deg,
+        #5B21B6,
+        #6D28D9
+    );
+    color:white;
+    padding:80px 0;
+}
+
+.hero-content{
+    max-width:700px;
+    margin:auto;
+    text-align:center;
+}
+
+.hero-badge{
+    display:inline-flex;
+    align-items:center;
+    padding:10px 18px;
+    border-radius:999px;
+    background:
+    rgba(255,255,255,.12);
+    backdrop-filter:blur(10px);
+    margin-bottom:24px;
+    font-size:.9rem;
+    font-weight:600;
+}
+
+.hero h1{
+    font-size:clamp(
+        2.8rem,
+        5vw,
+        4rem
+    );
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:1.1rem;
+    opacity:.9;
+    max-width:550px;
+    margin:auto auto 35px;
+}
+
+.btn-main{
+    background:white;
+    color:var(--roxo);
+    text-decoration:none;
+    padding:14px 28px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.btn-main:hover{
+    color:var(--roxo);
+    transform:translateY(-2px);
+}
+
+/* CARDS */
+
+.actions{
+    margin-top:-40px;
+    margin-bottom:70px;
+}
+
+.action-card{
+    background:white;
+    border:none;
+    border-radius:30px;
+    padding:35px;
+    text-align:center;
+    height:100%;
+    text-decoration:none;
+    color:inherit;
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.05);
+    transition:.3s;
+}
+
+.action-card:hover{
+    transform:translateY(-8px);
+    box-shadow:
+    0 20px 60px rgba(109,40,217,.15);
+    color:inherit;
+}
+
+.card-icon{
+    width:90px;
+    height:90px;
+    margin:0 auto 24px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+    linear-gradient(
+        135deg,
+        var(--roxo),
+        var(--roxo-claro)
+    );
+    color:white;
+    font-size:2rem;
+}
+
+.action-card h3{
+    font-size:1.2rem;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.action-card p{
+    color:var(--cinza);
+    margin:0;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:768px){
+    .hero{
+        padding:60px 0;
+    }
+    .hero h1{
+        font-size:2.5rem;
+    }
+    .actions{
+        margin-top:-20px;
+    }
+}
+</style>
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                Plataforma UFLA
+            </div>
+            <h1>
+                Achados e Perdidos
+            </h1>
+            <p>
+                Registre itens perdidos ou encontrados e ajude a comunidade da UFLA.
+            </p>
+            <a href="/itens/novo/" class="btn-main">
+                Registrar Item
+            </a>
+        </div>
+    </div>
+</section>
+<section class="actions">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <a href="/itens/?tipo=perdido" class="action-card">
+                    <div class="card-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h3>Perdi um item</h3>
+                    <p>
+                        Procure objetos encontrados.
+                    </p>
+                </a>
+            </div>
+            <div class="col-lg-4">
+                <a href="/itens/?tipo=encontrado" class="action-card">
+                    <div class="card-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h3>Encontrei um item</h3>
+                    <p>
+                        Registre um objeto encontrado.
+                    </p>
+                </a>
+            </div>
+            <div class="col-lg-4">
+                <a href="/itens/" class="action-card">
+                    <div class="card-icon">
+                        <i class="bi bi-grid"></i>
+                    </div>
+                    <h3>Ver todos</h3>
+                    <p>
+                        Explore todos os registros.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
