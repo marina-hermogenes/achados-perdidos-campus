@@ -7,214 +7,134 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-:root{
-    --roxo:#6D28D9;
-    --roxo-claro:#8B5CF6;
-    --fundo:#F8F7FF;
-    --texto:#1F2937;
-    --cinza:#6B7280;
+:root {
+    --roxo: #6D28D9;
+    --roxo-claro: #8B5CF6;
+    --fundo: #F8F7FF;
+    --texto: #1F2937;
+    --cinza: #6B7280;
 }
 
-body{
-    font-family:'Inter',sans-serif;
-}
+body { font-family: 'Inter', sans-serif; }
 
-/* HERO */
-
-.hero{
+.hero {
     background:
-    radial-gradient(
-        circle at top right,
-        rgba(139,92,246,.25),
-        transparent 30%
-    ),
-    linear-gradient(
-        135deg,
-        #5B21B6,
-        #6D28D9
-    );
-    color:white;
-    padding:80px 0;
+        radial-gradient(circle at top right, rgba(139,92,246,.25), transparent 40%),
+        linear-gradient(135deg, #5B21B6, #6D28D9);
+    color: white;
+    padding: 90px 0 120px;
 }
 
-.hero-content{
-    max-width:700px;
-    margin:auto;
-    text-align:center;
+.hero-content { max-width: 680px; margin: auto; text-align: center; }
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
+    margin-bottom: 24px;
+    font-size: .85rem;
+    font-weight: 600;
 }
 
-.hero-badge{
-    display:inline-flex;
-    align-items:center;
-    padding:10px 18px;
-    border-radius:999px;
-    background:
-    rgba(255,255,255,.12);
-    backdrop-filter:blur(10px);
-    margin-bottom:24px;
-    font-size:.9rem;
-    font-weight:600;
+.hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 800; margin-bottom: 18px; line-height: 1.15; }
+.hero p { font-size: 1.05rem; opacity: .88; max-width: 500px; margin: 0 auto 36px; line-height: 1.7; }
+
+.btn-main {
+    background: white;
+    color: var(--roxo);
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    display: inline-block;
+    transition: .25s;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+}
+.btn-main:hover { color: var(--roxo); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.2); }
+
+.actions-wrap { background: var(--fundo); padding-bottom: 60px; }
+
+.actions-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+    transform: translateY(-56px);
 }
 
-.hero h1{
-    font-size:clamp(
-        2.8rem,
-        5vw,
-        4rem
-    );
-    font-weight:800;
-    margin-bottom:20px;
+.action-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 8px 32px rgba(109,40,217,.10);
+    transition: .3s;
+    display: block;
+}
+.action-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(109,40,217,.18); color: inherit; }
+
+.card-icon {
+    width: 80px; height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--roxo), var(--roxo-claro));
+    color: white;
+    font-size: 1.8rem;
 }
 
-.hero p{
-    font-size:1.1rem;
-    opacity:.9;
-    max-width:550px;
-    margin:auto auto 35px;
-}
+.action-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--texto); }
+.action-card p { color: var(--cinza); font-size: .85rem; margin: 0; line-height: 1.55; }
 
-.btn-main{
-    background:white;
-    color:var(--roxo);
-    text-decoration:none;
-    padding:14px 28px;
-    border-radius:14px;
-    font-weight:700;
-    transition:.3s;
-}
-
-.btn-main:hover{
-    color:var(--roxo);
-    transform:translateY(-2px);
-}
-
-/* CARDS */
-
-.actions{
-    margin-top:-40px;
-    margin-bottom:70px;
-}
-
-.action-card{
-    background:white;
-    border:none;
-    border-radius:30px;
-    padding:35px;
-    text-align:center;
-    height:100%;
-    text-decoration:none;
-    color:inherit;
-    box-shadow:
-    0 15px 40px rgba(0,0,0,.05);
-    transition:.3s;
-}
-
-.action-card:hover{
-    transform:translateY(-8px);
-    box-shadow:
-    0 20px 60px rgba(109,40,217,.15);
-    color:inherit;
-}
-
-.card-icon{
-    width:90px;
-    height:90px;
-    margin:0 auto 24px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-    linear-gradient(
-        135deg,
-        var(--roxo),
-        var(--roxo-claro)
-    );
-    color:white;
-    font-size:2rem;
-}
-
-.action-card h3{
-    font-size:1.2rem;
-    font-weight:700;
-    margin-bottom:12px;
-}
-
-.action-card p{
-    color:var(--cinza);
-    margin:0;
-}
-
-/* RESPONSIVO */
-
-@media(max-width:768px){
-    .hero{
-        padding:60px 0;
-    }
-    .hero h1{
-        font-size:2.5rem;
-    }
-    .actions{
-        margin-top:-20px;
-    }
+@media (max-width: 768px) {
+    .hero { padding: 70px 0 100px; }
+    .actions-inner { transform: translateY(-40px); }
 }
 </style>
 
 <section class="hero">
     <div class="container">
         <div class="hero-content">
-            <div class="hero-badge">
-                Plataforma UFLA
-            </div>
-            <h1>
-                Achados e Perdidos
-            </h1>
-            <p>
-                Registre itens perdidos ou encontrados e ajude a comunidade da UFLA.
-            </p>
-            <a href="/itens/novo/" class="btn-main">
-                Registrar Item
-            </a>
+            <div class="hero-badge">🎓 Plataforma UFLA</div>
+            <h1>Achados e Perdidos</h1>
+            <p>Registre itens perdidos ou encontrados e ajude a comunidade da UFLA.</p>
+            <a href="{% url 'registrar_item' %}" class="btn-main">Registrar Item</a>
         </div>
     </div>
 </section>
-<section class="actions">
-    <div class="container">
+
+<div class="actions-wrap">
+    <div class="actions-inner">
         <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-12 col-md-4">
                 <a href="/itens/?tipo=perdido" class="action-card">
-                    <div class="card-icon">
-                        <i class="bi bi-search"></i>
-                    </div>
-                    <h3>Perdi um item</h3>
-                    <p>
-                        Procure objetos encontrados.
-                    </p>
+                    <div class="card-icon"><i class="bi bi-search"></i></div>
+                    <h3>Itens que foram perdidos</h3>
+                    <p>Aqui ficam os registros de quem perdeu algo no campus e está procurando. Se você perdeu um item, registre aqui.</p>
                 </a>
             </div>
-            <div class="col-lg-4">
+            <div class="col-12 col-md-4">
                 <a href="/itens/?tipo=encontrado" class="action-card">
-                    <div class="card-icon">
-                        <i class="bi bi-box-seam"></i>
-                    </div>
-                    <h3>Encontrei um item</h3>
-                    <p>
-                        Registre um objeto encontrado.
-                    </p>
+                    <div class="card-icon"><i class="bi bi-box-seam"></i></div>
+                    <h3>Itens que foram encontrados</h3>
+                    <p>Aqui ficam os registros de quem achou algo e não sabe de quem é. Se você encontrou um item, registre aqui.</p>
                 </a>
             </div>
-            <div class="col-lg-4">
+            <div class="col-12 col-md-4">
                 <a href="/itens/" class="action-card">
-                    <div class="card-icon">
-                        <i class="bi bi-grid"></i>
-                    </div>
+                    <div class="card-icon"><i class="bi bi-grid"></i></div>
                     <h3>Ver todos</h3>
-                    <p>
-                        Explore todos os registros.
-                    </p>
+                    <p>Explore todos os registros do campus.</p>
                 </a>
             </div>
         </div>
     </div>
-</section>
+</div>
+
 {% endblock %}

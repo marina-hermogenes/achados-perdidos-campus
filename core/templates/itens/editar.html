@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root { --roxo:#6D28D9; --roxo-claro:#8B5CF6; --fundo:#F8F7FF; --texto:#1F2937; --cinza:#6B7280; }
+body { font-family:'Inter',sans-serif; background:var(--fundo); }
+
+.page-header { background:linear-gradient(135deg,#5B21B6,#6D28D9); color:white; padding:40px 0; }
+.page-header h1 { font-weight:800; font-size:1.8rem; margin-bottom:4px; }
+.page-header p { opacity:.85; margin:0; font-size:.95rem; }
+
+.form-wrap { max-width:680px; margin:36px auto 60px; padding:0 16px; }
+.form-card { background:white; border-radius:24px; padding:36px; box-shadow:0 8px 32px rgba(109,40,217,.08); }
+
+.form-label { font-size:.8rem; font-weight:700; color:var(--cinza); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; display:block; }
+.form-control, .form-select { border:1.5px solid #E5E7EB; border-radius:12px; padding:11px 14px; font-size:.95rem; color:var(--texto); background:white; transition:.2s; width:100%; }
+.form-control:focus, .form-select:focus { border-color:var(--roxo-claro); outline:none; box-shadow:0 0 0 3px rgba(109,40,217,.1); }
+.form-control.erro, .form-select.erro { border-color:#DC2626; }
+.msg-erro { font-size:.8rem; color:#DC2626; margin-top:5px; display:flex; align-items:center; gap:4px; }
+
+.secao-titulo { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--roxo); margin:28px 0 16px; display:flex; align-items:center; gap:8px; }
+.secao-titulo::after { content:''; flex:1; height:1px; background:#EDE9FE; }
+
+/* Status toggle */
+.status-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.status-opcao input { display:none; }
+.status-label { display:flex; flex-direction:column; align-items:center; gap:8px; padding:18px; border-radius:16px; border:2px solid #E5E7EB; cursor:pointer; transition:.2s; text-align:center; }
+.status-label:hover { border-color:var(--roxo-claro); }
+.status-opcao input:checked + .status-label { border-color:var(--roxo); background:#F5F3FF; }
+.status-icone { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:#F3F0FF; color:var(--roxo); transition:.2s; }
+.status-opcao input:checked + .status-label .status-icone { background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); color:white; }
+.status-titulo { font-weight:700; font-size:.9rem; color:var(--texto); }
+.status-desc { font-size:.75rem; color:var(--cinza); }
+
+.foto-atual { border-radius:12px; overflow:hidden; margin-bottom:12px; }
+.foto-atual img { width:100%; max-height:200px; object-fit:cover; }
+
+.foto-area { border:2px dashed #DDD6FE; border-radius:16px; padding:22px; text-align:center; cursor:pointer; transition:.2s; background:#FAFAFE; }
+.foto-area:hover { border-color:var(--roxo-claro); background:#F5F3FF; }
+.foto-area i { font-size:1.6rem; color:var(--roxo-claro); margin-bottom:8px; display:block; }
+.foto-area p { color:var(--cinza); font-size:.85rem; margin:0; }
+.foto-area input { display:none; }
+
+.btn-salvar { width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); color:white; font-weight:700; font-size:1rem; cursor:pointer; transition:.25s; margin-top:8px; }
+.btn-salvar:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(109,40,217,.3); }
+.btn-cancelar { display:block; text-align:center; margin-top:14px; color:var(--cinza); font-size:.875rem; text-decoration:none; }
+.btn-cancelar:hover { color:var(--roxo); }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <h1>✏️ Editar Item</h1>
+        <p>Atualize as informações ou marque como resolvido</p>
+    </div>
+</div>
+
+<div class="form-wrap">
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Status -->
+            <div class="secao-titulo">Situação atual</div>
+            <div class="status-grid">
+                <div class="status-opcao">
+                    <input type="radio" name="status" id="status_aberto" value="aberto" {% if item.status == 'aberto' %}checked{% endif %}>
+                    <label for="status_aberto" class="status-label">
+                        <div class="status-icone"><i class="bi bi-clock"></i></div>
+                        <div class="status-titulo">Em aberto</div>
+                        <div class="status-desc">Ainda não foi resolvido</div>
+                    </label>
+                </div>
+                <div class="status-opcao">
+                    <input type="radio" name="status" id="status_resolvido" value="resolvido" {% if item.status == 'resolvido' %}checked{% endif %}>
+                    <label for="status_resolvido" class="status-label">
+                        <div class="status-icone"><i class="bi bi-check-circle"></i></div>
+                        <div class="status-titulo">Resolvido</div>
+                        <div class="status-desc">O item foi encontrado ou devolvido</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="secao-titulo">Informações do item</div>
+
+            <div style="margin-bottom:18px">
+                <label class="form-label" for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo" class="form-control {% if erros.titulo %}erro{% endif %}"
+                    value="{{ item.titulo }}" maxlength="100">
+                {% if erros.titulo %}<p class="msg-erro"><i class="bi bi-exclamation-circle"></i> {{ erros.titulo }}</p>{% endif %}
+            </div>
+
+            <div style="margin-bottom:18px">
+                <label class="form-label" for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" class="form-control {% if erros.descricao %}erro{% endif %}" rows="4">{{ item.descricao }}</textarea>
+                {% if erros.descricao %}<p class="msg-erro"><i class="bi bi-exclamation-circle"></i> {{ erros.descricao }}</p>{% endif %}
+            </div>
+
+            <div class="row g-3" style="margin-bottom:18px">
+                <div class="col-12 col-sm-6">
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <select id="categoria" name="categoria" class="form-select">
+                        <option value="">— Selecione —</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat.id }}" {% if item.categoria_id == cat.id %}selected{% endif %}>{{ cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <label class="form-label" for="localizacao">Localização</label>
+                    <select id="localizacao" name="localizacao" class="form-select">
+                        <option value="">— Selecione —</option>
+                        {% for loc in localizacoes %}
+                            <option value="{{ loc.id }}" {% if item.localizacao_id == loc.id %}selected{% endif %}>{{ loc.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Foto -->
+            <div class="secao-titulo">Foto</div>
+
+            {% if item.foto %}
+            <div class="foto-atual">
+                <img src="{{ item.foto.url }}" alt="Foto atual">
+            </div>
+            <p style="font-size:.8rem; color:var(--cinza); margin-bottom:10px">Foto atual — envie uma nova para substituir</p>
+            {% endif %}
+
+            <div class="foto-area" onclick="document.getElementById('foto').click()">
+                <input type="file" id="foto" name="foto" accept="image/*" onchange="mostrarNome(this)">
+                <i class="bi bi-camera"></i>
+                <p id="foto-texto">Clique para {{ item.foto|yesno:"substituir a foto,adicionar uma foto" }}</p>
+            </div>
+
+            <div style="margin-top:28px">
+                <button type="submit" class="btn-salvar"><i class="bi bi-check-lg"></i> Salvar alterações</button>
+                <a href="{% url 'detalhe_item' item.pk %}" class="btn-cancelar">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function mostrarNome(input) {
+    if (input.files && input.files[0])
+        document.getElementById('foto-texto').textContent = '📎 ' + input.files[0].name;
+}
+</script>
+{% endblock %}

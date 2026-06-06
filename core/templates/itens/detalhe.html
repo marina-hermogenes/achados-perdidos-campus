@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root { --roxo:#6D28D9; --roxo-claro:#8B5CF6; --cinza:#6B7280; --texto:#1F2937; }
+body { font-family:'Inter',sans-serif; }
+
+.page-header { background:linear-gradient(135deg,#5B21B6,#6D28D9); color:white; padding:30px 0; }
+.breadcrumb-custom { display:flex; align-items:center; gap:8px; font-size:.875rem; }
+.breadcrumb-custom a { color:white; text-decoration:none; opacity:.75; }
+.breadcrumb-custom a:hover { opacity:1; }
+
+.detalhe-wrap { padding:36px 0 60px; }
+.detalhe-card { background:white; border-radius:24px; box-shadow:0 8px 40px rgba(0,0,0,.07); overflow:hidden; }
+
+.detalhe-foto { width:100%; max-height:400px; object-fit:cover; }
+.detalhe-foto-placeholder { width:100%; height:260px; background:linear-gradient(135deg,#EDE9FE,#DDD6FE); display:flex; align-items:center; justify-content:center; font-size:5rem; }
+
+.detalhe-body { padding:32px; }
+
+.badge-tipo { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:10px; font-size:.85rem; font-weight:600; }
+.badge-perdido { background:#FEF2F2; color:#DC2626; }
+.badge-encontrado { background:#F0FDF4; color:#16A34A; }
+.badge-status { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:8px; font-size:.8rem; font-weight:600; margin-left:8px; }
+.badge-aberto { background:#FFF7ED; color:#D97706; }
+.badge-resolvido { background:#F0FDF4; color:#16A34A; }
+
+.detalhe-titulo { font-size:1.75rem; font-weight:800; color:var(--texto); margin-bottom:16px; line-height:1.3; }
+.detalhe-descricao { font-size:1rem; color:#374151; line-height:1.8; margin-bottom:28px; padding:20px; background:#FAFAFA; border-radius:14px; border-left:4px solid var(--roxo-claro); }
+
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px; }
+.info-item { background:#F9F8FF; border-radius:14px; padding:16px; display:flex; align-items:flex-start; gap:12px; }
+.info-icon { width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); display:flex; align-items:center; justify-content:center; color:white; font-size:1rem; flex-shrink:0; }
+.info-label { font-size:.72rem; font-weight:600; color:var(--cinza); text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px; }
+.info-value { font-size:.9rem; font-weight:600; color:var(--texto); }
+
+.acoes { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.btn-voltar { display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; background:#F3F0FF; color:var(--roxo); font-weight:600; text-decoration:none; font-size:.9rem; transition:.2s; border:none; cursor:pointer; }
+.btn-voltar:hover { background:var(--roxo); color:white; }
+
+.btn-resolver { display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; background:linear-gradient(135deg,#16A34A,#22C55E); color:white; font-weight:600; font-size:.9rem; transition:.2s; border:none; cursor:pointer; }
+.btn-resolver:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(22,163,74,.3); }
+
+.banner-resolvido { background:#F0FDF4; border:1.5px solid #BBF7D0; border-radius:14px; padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; gap:10px; color:#15803D; font-weight:600; font-size:.9rem; }
+
+@media(max-width:576px) { .info-grid{grid-template-columns:1fr;} .detalhe-titulo{font-size:1.4rem;} }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <div class="breadcrumb-custom">
+            <a href="/">Início</a>
+            <i class="bi bi-chevron-right" style="font-size:.75rem"></i>
+            <a href="/itens/">Itens</a>
+            <i class="bi bi-chevron-right" style="font-size:.75rem"></i>
+            <span style="opacity:.9">{{ item.titulo|truncatechars:40 }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="container detalhe-wrap">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="detalhe-card">
+
+                {% if item.foto %}
+                    <img src="{{ item.foto.url }}" alt="{{ item.titulo }}" class="detalhe-foto">
+                {% else %}
+                    <div class="detalhe-foto-placeholder">
+                        {% if item.tipo == 'perdido' %}🔍{% else %}📦{% endif %}
+                    </div>
+                {% endif %}
+
+                <div class="detalhe-body">
+
+                    {% if item.status == 'resolvido' %}
+                        <div class="banner-resolvido">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Este item já foi resolvido — o caso está encerrado.
+                        </div>
+                    {% endif %}
+
+                    <div style="margin-bottom:14px">
+                        <span class="badge-tipo {% if item.tipo == 'perdido' %}badge-perdido{% else %}badge-encontrado{% endif %}">
+                            {% if item.tipo == 'perdido' %}<i class="bi bi-search"></i> Perdido{% else %}<i class="bi bi-box-seam"></i> Encontrado{% endif %}
+                        </span>
+                        <span class="badge-status {% if item.status == 'aberto' %}badge-aberto{% else %}badge-resolvido{% endif %}">
+                            {% if item.status == 'aberto' %}● Em aberto{% else %}✓ Resolvido{% endif %}
+                        </span>
+                    </div>
+
+                    <h1 class="detalhe-titulo">{{ item.titulo }}</h1>
+
+                    <div class="detalhe-descricao">{{ item.descricao }}</div>
+
+                    <div class="info-grid">
+                        {% if item.categoria %}
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-tag"></i></div>
+                            <div>
+                                <div class="info-label">Categoria</div>
+                                <div class="info-value">{{ item.categoria }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if item.localizacao %}
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-geo-alt"></i></div>
+                            <div>
+                                <div class="info-label">Localização</div>
+                                <div class="info-value">{{ item.localizacao }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <div class="info-label">Registrado por</div>
+                                <div class="info-value">{{ item.autor.get_full_name|default:item.autor.username }}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-calendar3"></i></div>
+                            <div>
+                                <div class="info-label">Data</div>
+                                <div class="info-value">{{ item.data|date:"d/m/Y \à\s H:i" }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="acoes">
+                        <a href="/itens/" class="btn-voltar">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        {% if request.user == item.autor and item.status == 'aberto' %}
+                        <form method="post" action="{% url 'resolver_item' item.pk %}" style="margin:0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-resolver">
+                                <i class="bi bi-check-lg"></i> Marcar como resolvido
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

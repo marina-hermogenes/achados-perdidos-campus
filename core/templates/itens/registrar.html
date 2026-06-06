@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root { --roxo:#6D28D9; --roxo-claro:#8B5CF6; --fundo:#F8F7FF; --texto:#1F2937; --cinza:#6B7280; }
+body { font-family:'Inter',sans-serif; background:var(--fundo); }
+
+.page-header { background:linear-gradient(135deg,#5B21B6,#6D28D9); color:white; padding:40px 0; }
+.page-header h1 { font-weight:800; font-size:1.8rem; margin-bottom:4px; }
+.page-header p { opacity:.85; margin:0; font-size:.95rem; }
+
+.form-wrap { max-width:680px; margin:36px auto 60px; padding:0 16px; }
+.form-card { background:white; border-radius:24px; padding:36px; box-shadow:0 8px 32px rgba(109,40,217,.08); }
+
+.form-label { font-size:.8rem; font-weight:700; color:var(--cinza); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; display:block; }
+
+.form-control, .form-select {
+    border:1.5px solid #E5E7EB; border-radius:12px; padding:11px 14px;
+    font-size:.95rem; color:var(--texto); background:white;
+    transition:.2s; width:100%;
+}
+.form-control:focus, .form-select:focus { border-color:var(--roxo-claro); outline:none; box-shadow:0 0 0 3px rgba(109,40,217,.1); }
+.form-control.erro, .form-select.erro { border-color:#DC2626; }
+
+.msg-erro { font-size:.8rem; color:#DC2626; margin-top:5px; display:flex; align-items:center; gap:4px; }
+
+/* Tipo */
+.tipo-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.tipo-opcao input { display:none; }
+.tipo-label { display:flex; flex-direction:column; align-items:center; gap:10px; padding:20px; border-radius:16px; border:2px solid #E5E7EB; cursor:pointer; transition:.2s; text-align:center; }
+.tipo-label:hover { border-color:var(--roxo-claro); }
+.tipo-opcao input:checked + .tipo-label { border-color:var(--roxo); background:#F5F3FF; }
+.tipo-icone { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; background:#F3F0FF; color:var(--roxo); transition:.2s; }
+.tipo-opcao input:checked + .tipo-label .tipo-icone { background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); color:white; }
+.tipo-titulo { font-weight:700; font-size:.95rem; color:var(--texto); }
+.tipo-desc { font-size:.78rem; color:var(--cinza); line-height:1.4; }
+
+/* Select com criação rápida */
+.campo-com-novo { position:relative; }
+.toggle-novo { font-size:.78rem; color:var(--roxo); font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin-top:6px; background:none; border:none; padding:0; }
+.toggle-novo:hover { text-decoration:underline; }
+.campo-novo { margin-top:8px; display:none; }
+.campo-novo.visivel { display:flex; gap:8px; }
+.campo-novo input { flex:1; }
+.btn-adicionar { padding:10px 16px; border-radius:12px; background:var(--roxo); color:white; border:none; font-weight:600; font-size:.85rem; cursor:pointer; white-space:nowrap; transition:.2s; }
+.btn-adicionar:hover { background:var(--roxo-claro); }
+
+/* Upload foto */
+.foto-area { border:2px dashed #DDD6FE; border-radius:16px; padding:28px; text-align:center; cursor:pointer; transition:.2s; background:#FAFAFE; }
+.foto-area:hover { border-color:var(--roxo-claro); background:#F5F3FF; }
+.foto-area i { font-size:2rem; color:var(--roxo-claro); margin-bottom:10px; display:block; }
+.foto-area p { color:var(--cinza); font-size:.85rem; margin:0; }
+.foto-area input { display:none; }
+
+.secao-titulo { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--roxo); margin:28px 0 16px; display:flex; align-items:center; gap:8px; }
+.secao-titulo::after { content:''; flex:1; height:1px; background:#EDE9FE; }
+
+.btn-enviar { width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); color:white; font-weight:700; font-size:1rem; cursor:pointer; transition:.25s; margin-top:8px; }
+.btn-enviar:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(109,40,217,.3); }
+.btn-cancelar { display:block; text-align:center; margin-top:14px; color:var(--cinza); font-size:.875rem; text-decoration:none; }
+.btn-cancelar:hover { color:var(--roxo); }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <h1>📝 Registrar Item</h1>
+        <p>Preencha as informações abaixo para publicar seu registro</p>
+    </div>
+</div>
+
+<div class="form-wrap">
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="secao-titulo">Tipo de registro</div>
+            <div class="tipo-grid">
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="tipo_perdido" value="perdido"
+                        {% if not post or post.tipo == 'perdido' %}checked{% endif %}>
+                    <label for="tipo_perdido" class="tipo-label">
+                        <div class="tipo-icone"><i class="bi bi-search"></i></div>
+                        <div>
+                            <div class="tipo-titulo">Perdi um item</div>
+                            <div class="tipo-desc">Você perdeu algo e está procurando</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="tipo_encontrado" value="encontrado"
+                        {% if post.tipo == 'encontrado' %}checked{% endif %}>
+                    <label for="tipo_encontrado" class="tipo-label">
+                        <div class="tipo-icone"><i class="bi bi-box-seam"></i></div>
+                        <div>
+                            <div class="tipo-titulo">Encontrei um item</div>
+                            <div class="tipo-desc">Você achou algo e não sabe de quem é</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            {% if erros.tipo %}<p class="msg-erro"><i class="bi bi-exclamation-circle"></i> {{ erros.tipo }}</p>{% endif %}
+
+            <div class="secao-titulo">Informações do item</div>
+
+            <div style="margin-bottom:18px">
+                <label class="form-label" for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo"
+                    class="form-control {% if erros.titulo %}erro{% endif %}"
+                    placeholder="Ex: Carteira preta, Fone de ouvido azul..."
+                    value="{{ post.titulo|default:'' }}" maxlength="100">
+                {% if erros.titulo %}<p class="msg-erro"><i class="bi bi-exclamation-circle"></i> {{ erros.titulo }}</p>{% endif %}
+            </div>
+
+            <div style="margin-bottom:18px">
+                <label class="form-label" for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" rows="4"
+                    class="form-control {% if erros.descricao %}erro{% endif %}"
+                    placeholder="Descreva o item: cor, tamanho, marca, onde foi visto...">{{ post.descricao|default:'' }}</textarea>
+                {% if erros.descricao %}<p class="msg-erro"><i class="bi bi-exclamation-circle"></i> {{ erros.descricao }}</p>{% endif %}
+            </div>
+
+            <div class="row g-3" style="margin-bottom:18px">
+
+                <!-- Categoria -->
+                <div class="col-12 col-sm-6">
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <div class="campo-com-novo">
+                        <select id="categoria" name="categoria" class="form-select">
+                            <option value="">— Selecione —</option>
+                            {% for cat in categorias %}
+                                <option value="{{ cat.id }}" {% if post.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="toggle-novo" onclick="toggleNovo('categoria')">
+                            <i class="bi bi-plus-circle"></i> Criar nova categoria
+                        </button>
+                        <div class="campo-novo" id="novo-categoria">
+                            <input type="text" name="nova_categoria" class="form-control"
+                                placeholder="Nome da nova categoria">
+                            <button type="button" class="btn-adicionar" onclick="toggleNovo('categoria')">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Localização -->
+                <div class="col-12 col-sm-6">
+                    <label class="form-label" for="localizacao">Localização</label>
+                    <div class="campo-com-novo">
+                        <select id="localizacao" name="localizacao" class="form-select">
+                            <option value="">— Selecione —</option>
+                            {% for loc in localizacoes %}
+                                <option value="{{ loc.id }}" {% if post.localizacao == loc.id|stringformat:"s" %}selected{% endif %}>{{ loc.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="toggle-novo" onclick="toggleNovo('localizacao')">
+                            <i class="bi bi-plus-circle"></i> Criar nova localização
+                        </button>
+                        <div class="campo-novo" id="novo-localizacao">
+                            <input type="text" name="nova_localizacao" class="form-control"
+                                placeholder="Nome da nova localização">
+                            <button type="button" class="btn-adicionar" onclick="toggleNovo('localizacao')">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="secao-titulo">Foto (opcional)</div>
+            <div class="foto-area" onclick="document.getElementById('foto').click()">
+                <input type="file" id="foto" name="foto" accept="image/*" onchange="mostrarNome(this)">
+                <i class="bi bi-camera"></i>
+                <p id="foto-texto">Clique para adicionar uma foto do item</p>
+            </div>
+
+            <div style="margin-top:28px">
+                <button type="submit" class="btn-enviar">
+                    <i class="bi bi-check-lg"></i> Publicar registro
+                </button>
+                <a href="/itens/" class="btn-cancelar">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleNovo(campo) {
+    const div = document.getElementById('novo-' + campo);
+    div.classList.toggle('visivel');
+    if (div.classList.contains('visivel')) {
+        // limpa o select para não conflitar
+        document.getElementById(campo).value = '';
+        div.querySelector('input').focus();
+    }
+}
+
+function mostrarNome(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('foto-texto').textContent = '📎 ' + input.files[0].name;
+    }
+}
+</script>
+{% endblock %}

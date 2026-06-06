@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --roxo: #6D28D9;
+    --roxo-claro: #8B5CF6;
+    --fundo: #F8F7FF;
+    --texto: #1F2937;
+    --cinza: #6B7280;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+.page-header {
+    background: linear-gradient(135deg, #5B21B6, #6D28D9);
+    color: white;
+    padding: 40px 0 60px;
+}
+
+.page-header h1 { font-weight: 800; font-size: 2rem; margin-bottom: 6px; }
+.page-header p { opacity: .85; margin: 0; }
+
+/* Filtros */
+.filtros-wrap {
+    margin-top: -30px;
+    margin-bottom: 36px;
+}
+
+.filtros-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px 28px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.06);
+}
+
+.filtros-card label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--cinza);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.btn-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #E5E7EB;
+    background: white;
+    color: var(--texto);
+    font-size: .875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.btn-filtro:hover { border-color: var(--roxo-claro); color: var(--roxo); }
+.btn-filtro.ativo { background: var(--roxo); border-color: var(--roxo); color: white; }
+
+.select-filtro {
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: .875rem;
+    color: var(--texto);
+    background: white;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.select-filtro:focus { border-color: var(--roxo-claro); outline: none; box-shadow: 0 0 0 3px rgba(109,40,217,.1); }
+
+/* Cards de item */
+.item-card {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    transition: .3s;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(109,40,217,.12);
+    color: inherit;
+}
+
+.item-foto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: #F3F0FF;
+}
+
+.item-foto-placeholder {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #EDE9FE, #DDD6FE);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--roxo-claro);
+}
+
+.item-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+
+.badge-tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.badge-perdido { background: #FEF2F2; color: #DC2626; }
+.badge-encontrado { background: #F0FDF4; color: #16A34A; }
+
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+.badge-aberto { background: #FFF7ED; color: #D97706; }
+.badge-resolvido { background: #F0FDF4; color: #16A34A; }
+
+.item-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texto);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.item-meta {
+    font-size: .78rem;
+    color: var(--cinza);
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #F3F4F6;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* Sem resultados */
+.sem-resultados {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--cinza);
+}
+
+.sem-resultados i { font-size: 3.5rem; opacity: .3; margin-bottom: 16px; display: block; }
+
+/* Contagem */
+.contagem {
+    font-size: .875rem;
+    color: var(--cinza);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+</style>
+
+<!-- Cabeçalho -->
+<div class="page-header">
+    <div class="container">
+        <h1>
+            {% if tipo_atual == 'perdido' %}
+                🔍 Itens Perdidos
+            {% elif tipo_atual == 'encontrado' %}
+                📦 Itens Encontrados
+            {% else %}
+                📋 Todos os Itens
+            {% endif %}
+        </h1>
+        <p>Navegue pelos registros e encontre o que procura</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="container">
+    <div class="filtros-wrap">
+        <div class="filtros-card">
+            <form method="get" class="row g-3 align-items-end">
+
+                <!-- Tipo -->
+                <div class="col-12 col-md-auto">
+                    <label>Tipo</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if status_atual %}status={{ status_atual }}{% endif %}"
+                           class="btn-filtro {% if not tipo_atual %}ativo{% endif %}">
+                            Todos
+                        </a>
+                        <a href="?tipo=perdido{% if categoria_atual %}&categoria={{ categoria_atual }}{% endif %}{% if status_atual %}&status={{ status_atual }}{% endif %}"
+                           class="btn-filtro {% if tipo_atual == 'perdido' %}ativo{% endif %}">
+                            <i class="bi bi-search"></i> Perdidos
+                        </a>
+                        <a href="?tipo=encontrado{% if categoria_atual %}&categoria={{ categoria_atual }}{% endif %}{% if status_atual %}&status={{ status_atual }}{% endif %}"
+                           class="btn-filtro {% if tipo_atual == 'encontrado' %}ativo{% endif %}">
+                            <i class="bi bi-box-seam"></i> Encontrados
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Categoria -->
+                <div class="col-12 col-md-auto">
+                    <label for="categoria">Categoria</label>
+                    <select name="categoria" id="categoria" class="select-filtro" onchange="this.form.submit()">
+                        <option value="">Todas as categorias</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat.id }}" {% if categoria_atual == cat.id|stringformat:"s" %}selected{% endif %}>
+                                {{ cat.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if tipo_atual %}<input type="hidden" name="tipo" value="{{ tipo_atual }}">{% endif %}
+                    {% if status_atual %}<input type="hidden" name="status" value="{{ status_atual }}">{% endif %}
+                </div>
+
+                <!-- Status -->
+                <div class="col-12 col-md-auto">
+                    <label>Status</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="?{% if tipo_atual %}tipo={{ tipo_atual }}&{% endif %}{% if categoria_atual %}categoria={{ categoria_atual }}{% endif %}"
+                           class="btn-filtro {% if not status_atual %}ativo{% endif %}">
+                            Todos
+                        </a>
+                        <a href="?status=aberto{% if tipo_atual %}&tipo={{ tipo_atual }}{% endif %}{% if categoria_atual %}&categoria={{ categoria_atual }}{% endif %}"
+                           class="btn-filtro {% if status_atual == 'aberto' %}ativo{% endif %}">
+                            Em aberto
+                        </a>
+                        <a href="?status=resolvido{% if tipo_atual %}&tipo={{ tipo_atual }}{% endif %}{% if categoria_atual %}&categoria={{ categoria_atual }}{% endif %}"
+                           class="btn-filtro {% if status_atual == 'resolvido' %}ativo{% endif %}">
+                            Resolvidos
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Contagem -->
+    <p class="contagem">
+        <strong>{{ itens|length }}</strong> registro{{ itens|length|pluralize }} encontrado{{ itens|length|pluralize }}
+    </p>
+
+    <!-- Grid de itens -->
+    {% if itens %}
+        <div class="row g-4 mb-5">
+            {% for item in itens %}
+            <div class="col-12 col-sm-6 col-lg-4">
+                <a href="{% url 'detalhe_item' item.pk %}" class="item-card">
+
+                    {% if item.foto %}
+                        <img src="{{ item.foto.url }}" alt="{{ item.titulo }}" class="item-foto">
+                    {% else %}
+                        <div class="item-foto-placeholder">
+                            {% if item.tipo == 'perdido' %}🔍{% else %}📦{% endif %}
+                        </div>
+                    {% endif %}
+
+                    <div class="item-body">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge-tipo {% if item.tipo == 'perdido' %}badge-perdido{% else %}badge-encontrado{% endif %}">
+                                {% if item.tipo == 'perdido' %}
+                                    <i class="bi bi-search"></i> Perdido
+                                {% else %}
+                                    <i class="bi bi-box-seam"></i> Encontrado
+                                {% endif %}
+                            </span>
+                            <span class="badge-status {% if item.status == 'aberto' %}badge-aberto{% else %}badge-resolvido{% endif %}">
+                                {% if item.status == 'aberto' %}● Aberto{% else %}✓ Resolvido{% endif %}
+                            </span>
+                        </div>
+
+                        <div class="item-titulo">{{ item.titulo }}</div>
+
+                        <p style="font-size:.85rem; color:#6B7280; margin:0 0 8px; flex:1">
+                            {{ item.descricao|truncatechars:80 }}
+                        </p>
+
+                        <div class="item-meta">
+                            {% if item.categoria %}
+                                <span><i class="bi bi-tag"></i> {{ item.categoria }}</span>
+                            {% endif %}
+                            {% if item.localizacao %}
+                                <span><i class="bi bi-geo-alt"></i> {{ item.localizacao }}</span>
+                            {% endif %}
+                            <span><i class="bi bi-clock"></i> {{ item.data|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="sem-resultados">
+            <i class="bi bi-inbox"></i>
+            <h4 style="font-weight:700; color:#374151; margin-bottom:8px">Nenhum item encontrado</h4>
+            <p>Tente ajustar os filtros ou <a href="/itens/" style="color:var(--roxo)">ver todos os registros</a>.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
