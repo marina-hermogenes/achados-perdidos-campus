@@ -149,3 +149,72 @@ def resolver_item(request, pk):
         item.status = 'resolvido'
         item.save()
     return redirect('detalhe_item', pk=item.pk)
+
+@login_required
+def perfil(request):
+    itens = Item.objects.filter(autor=request.user).order_by('-data')
+    return render(request, 'perfil.html', {
+        'itens': itens,
+        'total': itens.count(),
+        'abertos': itens.filter(status='aberto').count(),
+        'resolvidos': itens.filter(status='resolvido').count(),
+    })
+
+@login_required
+def editar_item(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    if request.user != item.autor:
+        return HttpResponseForbidden()
+    categorias = Categoria.objects.all()
+    localizacoes = Localizacao.objects.all()
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo', '').strip()
+        descricao = request.POST.get('descricao', '').strip()
+        status = request.POST.get('status', 'aberto')
+        categoria_id = request.POST.get('categoria') or None
+        if categoria_id == '__novo__':
+            categoria_id = None
+        localizacao_id = request.POST.get('localizacao') or None
+        if localizacao_id == '__novo__':
+            localizacao_id = None
+        foto = request.FILES.get('foto')
+
+        nova_categoria = request.POST.get('nova_categoria', '').strip()
+        if nova_categoria and len(nova_categoria) >= 3:
+            cat = Categoria.objects.filter(nome__iexact=nova_categoria).first()
+            if not cat:
+                cat = Categoria.objects.create(nome=nova_categoria)
+            categoria_id = cat.pk
+
+        nova_localizacao = request.POST.get('nova_localizacao', '').strip()
+        if nova_localizacao and len(nova_localizacao) >= 3:
+            loc = Localizacao.objects.filter(nome__iexact=nova_localizacao).first()
+            if not loc:
+                loc = Localizacao.objects.create(nome=nova_localizacao)
+            localizacao_id = loc.pk
+        erros = {}
+        if len(titulo) < 3:
+            erros['titulo'] = 'O título deve ter pelo menos 3 caracteres.'
+        if len(descricao) < 10:
+            erros['descricao'] = 'A descrição deve ter pelo menos 10 caracteres.'
+        if not erros:
+            item.titulo = titulo
+            item.descricao = descricao
+            item.status = status
+            item.categoria_id = categoria_id
+            item.localizacao_id = localizacao_id
+            if foto:
+                item.foto = foto
+            item.save()
+            return redirect('detalhe_item', pk=item.pk)
+        return render(request, 'itens/editar.html', {
+            'item': item,
+            'categorias': categorias,
+            'localizacoes': localizacoes,
+            'erros': erros,
+        })
+    return render(request, 'itens/editar.html', {
+        'item': item,
+        'categorias': categorias,
+        'localizacoes': localizacoes,
+    })

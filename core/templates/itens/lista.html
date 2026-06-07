@@ -188,11 +188,11 @@ body { font-family: 'Inter', sans-serif; }
     <div class="container">
         <h1>
             {% if tipo_atual == 'perdido' %}
-                🔍 Itens Perdidos
+                <i class="bi bi-search"></i> Itens Perdidos
             {% elif tipo_atual == 'encontrado' %}
-                📦 Itens Encontrados
+                <i class="bi bi-box-seam"></i> Itens Encontrados
             {% else %}
-                📋 Todos os Itens
+                <i class="bi bi-grid"></i> Todos os Itens
             {% endif %}
         </h1>
         <p>Navegue pelos registros e encontre o que procura</p>
@@ -278,7 +278,7 @@ body { font-family: 'Inter', sans-serif; }
                         <img src="{{ item.foto.url }}" alt="{{ item.titulo }}" class="item-foto">
                     {% else %}
                         <div class="item-foto-placeholder">
-                            {% if item.tipo == 'perdido' %}🔍{% else %}📦{% endif %}
+                            {% if item.tipo == 'perdido' %}<i class="bi bi-search"></i>{% else %}<i class="bi bi-box-seam"></i>{% endif %}
                         </div>
                     {% endif %}
 

@@ -48,11 +48,20 @@ body { font-family:'Inter',sans-serif; background:var(--fundo); }
 .btn-salvar:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(109,40,217,.3); }
 .btn-cancelar { display:block; text-align:center; margin-top:14px; color:var(--cinza); font-size:.875rem; text-decoration:none; }
 .btn-cancelar:hover { color:var(--roxo); }
+
+.campo-com-novo { position:relative; }
+.toggle-novo { font-size:.78rem; color:var(--roxo); font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin-top:6px; background:none; border:none; padding:0; }
+.toggle-novo:hover { text-decoration:underline; }
+.campo-novo { margin-top:8px; display:none; }
+.campo-novo.visivel { display:flex; gap:8px; }
+.campo-novo input { flex:1; }
+.btn-adicionar { padding:10px 16px; border-radius:12px; background:var(--roxo); color:white; border:none; font-weight:600; font-size:.85rem; cursor:pointer; white-space:nowrap; transition:.2s; }
+.btn-adicionar:hover { background:var(--roxo-claro); }
 </style>
 
 <div class="page-header">
     <div class="container">
-        <h1>✏️ Editar Item</h1>
+        <h1><i class="bi bi-pencil"></i> Editar Item</h1>
         <p>Atualize as informações ou marque como resolvido</p>
     </div>
 </div>
@@ -102,21 +111,43 @@ body { font-family:'Inter',sans-serif; background:var(--fundo); }
             <div class="row g-3" style="margin-bottom:18px">
                 <div class="col-12 col-sm-6">
                     <label class="form-label" for="categoria">Categoria</label>
-                    <select id="categoria" name="categoria" class="form-select">
-                        <option value="">— Selecione —</option>
-                        {% for cat in categorias %}
-                            <option value="{{ cat.id }}" {% if item.categoria_id == cat.id %}selected{% endif %}>{{ cat.nome }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="campo-com-novo">
+                        <select id="categoria" name="categoria" class="form-select">
+                            <option value="">— Selecione —</option>
+                            {% for cat in categorias %}
+                                <option value="{{ cat.id }}" {% if item.categoria_id == cat.id %}selected{% endif %}>{{ cat.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="toggle-novo" onclick="toggleNovo('categoria')">
+                            <i class="bi bi-plus-circle"></i> Criar nova categoria
+                        </button>
+                        <div class="campo-novo" id="novo-categoria">
+                            <input type="text" id="input-nova-categoria" class="form-control"
+                                placeholder="Nome da nova categoria">
+                            <input type="hidden" name="nova_categoria" id="hidden-nova-categoria" value="">
+                            <button type="button" class="btn-adicionar" onclick="confirmarNovo('categoria')">OK</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <label class="form-label" for="localizacao">Localização</label>
-                    <select id="localizacao" name="localizacao" class="form-select">
-                        <option value="">— Selecione —</option>
-                        {% for loc in localizacoes %}
-                            <option value="{{ loc.id }}" {% if item.localizacao_id == loc.id %}selected{% endif %}>{{ loc.nome }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="campo-com-novo">
+                        <select id="localizacao" name="localizacao" class="form-select">
+                            <option value="">— Selecione —</option>
+                            {% for loc in localizacoes %}
+                                <option value="{{ loc.id }}" {% if item.localizacao_id == loc.id %}selected{% endif %}>{{ loc.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="toggle-novo" onclick="toggleNovo('localizacao')">
+                            <i class="bi bi-plus-circle"></i> Criar nova localização
+                        </button>
+                        <div class="campo-novo" id="novo-localizacao">
+                            <input type="text" id="input-nova-localizacao" class="form-control"
+                                placeholder="Nome da nova localização">
+                            <input type="hidden" name="nova_localizacao" id="hidden-nova-localizacao" value="">
+                            <button type="button" class="btn-adicionar" onclick="confirmarNovo('localizacao')">OK</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -149,5 +180,63 @@ function mostrarNome(input) {
     if (input.files && input.files[0])
         document.getElementById('foto-texto').textContent = '📎 ' + input.files[0].name;
 }
+
+function toggleNovo(campo) {
+    const div = document.getElementById('novo-' + campo);
+    div.classList.toggle('visivel');
+    if (div.classList.contains('visivel')) {
+        document.getElementById(campo).value = '';
+        div.querySelector('input').focus();
+    }
+}
+
+function confirmarNovo(campo) {
+    const inputId = 'input-nova-' + campo;
+    const input = document.getElementById(inputId);
+    const nome = input.value.trim();
+
+    if (nome.length < 3) {
+        input.style.borderColor = '#DC2626';
+        input.placeholder = 'Mínimo 3 caracteres';
+        return;
+    }
+
+    const select = document.getElementById(campo);
+
+    const jaExiste = Array.from(select.options).find(
+        opt => opt.text.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (jaExiste) {
+        select.value = jaExiste.value;
+    } else {
+        const option = document.createElement('option');
+        option.value = '__novo__';
+        option.text = nome;
+        select.add(option);
+        select.value = '__novo__';
+
+        document.getElementById('hidden-nova-' + campo).value = nome;
+    }
+
+    select.style.borderColor = '#16A34A';
+    select.style.boxShadow = '0 0 0 3px rgba(22,163,74,.15)';
+    setTimeout(() => {
+        select.style.borderColor = '';
+        select.style.boxShadow = '';
+    }, 2000);
+
+    const div = document.getElementById('novo-' + campo);
+    div.classList.remove('visivel');
+    input.value = '';
+    input.style.borderColor = '';
+}
+
+function mostrarNome(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('foto-texto').textContent = '📎 ' + input.files[0].name;
+    }
+}
+
 </script>
 {% endblock %}
