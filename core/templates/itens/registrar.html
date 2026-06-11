@@ -66,7 +66,7 @@ body { font-family:'Inter',sans-serif; background:var(--fundo); }
 
 <div class="page-header">
     <div class="container">
-        <h1>📝 Registrar Item</h1>
+        <h1><i class="bi bi-plus-circle"></i> Registrar Item</h1>
         <p>Preencha as informações abaixo para publicar seu registro</p>
     </div>
 </div>
@@ -140,7 +140,7 @@ body { font-family:'Inter',sans-serif; background:var(--fundo); }
                         <div class="campo-novo" id="novo-categoria">
                             <input type="text" name="nova_categoria" class="form-control"
                                 placeholder="Nome da nova categoria">
-                            <button type="button" class="btn-adicionar" onclick="toggleNovo('categoria')">OK</button>
+                            <button type="button" class="btn-adicionar" onclick="confirmarNovo('categoria')">OK</button>
                         </div>
                     </div>
                 </div>
@@ -161,7 +161,7 @@ body { font-family:'Inter',sans-serif; background:var(--fundo); }
                         <div class="campo-novo" id="novo-localizacao">
                             <input type="text" name="nova_localizacao" class="form-control"
                                 placeholder="Nome da nova localização">
-                            <button type="button" class="btn-adicionar" onclick="toggleNovo('localizacao')">OK</button>
+                            <button type="button" class="btn-adicionar" onclick="confirmarNovo('localizacao')">OK</button>
                         </div>
                     </div>
                 </div>
@@ -191,10 +191,61 @@ function toggleNovo(campo) {
     const div = document.getElementById('novo-' + campo);
     div.classList.toggle('visivel');
     if (div.classList.contains('visivel')) {
-        // limpa o select para não conflitar
         document.getElementById(campo).value = '';
         div.querySelector('input').focus();
     }
+}
+
+function confirmarNovo(campo) {
+    const div = document.getElementById('novo-' + campo);
+    const input = div.querySelector('input');
+    const nome = input.value.trim();
+
+    if (nome.length < 3) {
+        input.style.borderColor = '#DC2626';
+        input.placeholder = 'Mínimo 3 caracteres';
+        return;
+    }
+
+    const select = document.getElementById(campo);
+
+    // Verifica se já existe uma opção com esse nome (case insensitive)
+    const jaExiste = Array.from(select.options).find(
+        opt => opt.text.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (jaExiste) {
+        select.value = jaExiste.value;
+    } else {
+        const option = document.createElement('option');
+        option.value = '__novo__';
+        option.text = nome;
+        select.add(option);
+        select.value = '__novo__';
+        // Atualiza o input hidden que o backend vai ler
+        const hiddenName = campo === 'categoria' ? 'nova_categoria' : 'nova_localizacao';
+        let hidden = document.querySelector(`input[name="${hiddenName}"]`);
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = hiddenName;
+            document.querySelector('form').appendChild(hidden);
+        }
+        hidden.value = nome;
+    }
+
+    // Feedback visual
+    select.style.borderColor = '#16A34A';
+    select.style.boxShadow = '0 0 0 3px rgba(22,163,74,.15)';
+    setTimeout(() => {
+        select.style.borderColor = '';
+        select.style.boxShadow = '';
+    }, 2000);
+
+    // Esconde o campo e limpa
+    div.classList.remove('visivel');
+    input.value = '';
+    input.style.borderColor = '';
 }
 
 function mostrarNome(input) {

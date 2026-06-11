@@ -70,7 +70,7 @@ body { font-family:'Inter',sans-serif; }
                     <img src="{{ item.foto.url }}" alt="{{ item.titulo }}" class="detalhe-foto">
                 {% else %}
                     <div class="detalhe-foto-placeholder">
-                        {% if item.tipo == 'perdido' %}🔍{% else %}📦{% endif %}
+                        {% if item.tipo == 'perdido' %}<i class="bi bi-search"></i>{% else %}<i class="bi bi-box-seam"></i>{% endif %}
                     </div>
                 {% endif %}
 
@@ -135,6 +135,11 @@ body { font-family:'Inter',sans-serif; }
                         <a href="/itens/" class="btn-voltar">
                             <i class="bi bi-arrow-left"></i> Voltar
                         </a>
+                        {% if request.user == item.autor %}
+                        <a href="{% url 'editar_item' item.pk %}" class="btn-voltar">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        {% endif %}
                         {% if request.user == item.autor and item.status == 'aberto' %}
                         <form method="post" action="{% url 'resolver_item' item.pk %}" style="margin:0">
                             {% csrf_token %}

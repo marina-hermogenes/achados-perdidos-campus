@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root { --roxo:#6D28D9; --roxo-claro:#8B5CF6; --fundo:#F8F7FF; --texto:#1F2937; --cinza:#6B7280; }
+body { font-family:'Inter',sans-serif; background:var(--fundo); }
+.page-header { background:linear-gradient(135deg,#5B21B6,#6D28D9); color:white; padding:40px 0 70px; }
+.page-header h1 { font-weight:800; font-size:1.8rem; margin-bottom:4px; }
+.page-header p { opacity:.85; margin:0; font-size:.95rem; }
+.perfil-wrap { max-width:860px; margin:-40px auto 60px; padding:0 16px; }
+.perfil-card { background:white; border-radius:24px; padding:32px; box-shadow:0 8px 32px rgba(109,40,217,.08); margin-bottom:24px; }
+.avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--roxo),var(--roxo-claro)); display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; font-weight:700; margin-bottom:16px; }
+.perfil-nome { font-size:1.4rem; font-weight:800; color:var(--texto); margin-bottom:4px; }
+.perfil-usuario { font-size:.9rem; color:var(--cinza); margin-bottom:16px; }
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.stat-item { background:var(--fundo); border-radius:14px; padding:16px; text-align:center; }
+.stat-numero { font-size:1.6rem; font-weight:800; color:var(--roxo); }
+.stat-label { font-size:.78rem; color:var(--cinza); font-weight:600; }
+.secao-titulo { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--roxo); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.secao-titulo::after { content:''; flex:1; height:1px; background:#EDE9FE; }
+.item-linha { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #F3F4F6; text-decoration:none; color:inherit; transition:.2s; }
+.item-linha:last-child { border-bottom:none; }
+.item-linha:hover { color:var(--roxo); }
+.item-linha-icone { width:42px; height:42px; border-radius:12px; background:var(--fundo); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+.item-linha-titulo { font-weight:600; font-size:.95rem; flex:1; }
+.item-linha-meta { font-size:.78rem; color:var(--cinza); }
+.badge-tipo { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:8px; font-size:.72rem; font-weight:600; }
+.badge-perdido { background:#FEF2F2; color:#DC2626; }
+.badge-encontrado { background:#F0FDF4; color:#16A34A; }
+.badge-aberto { background:#FFF7ED; color:#D97706; }
+.badge-resolvido { background:#F0FDF4; color:#16A34A; }
+.sem-itens { text-align:center; padding:40px 0; color:var(--cinza); }
+.sem-itens i { font-size:2.5rem; opacity:.3; display:block; margin-bottom:12px; }
+</style>
+<div class="page-header">
+    <div class="container">
+        <h1>Meu Perfil</h1>
+        <p>Gerencie seus registros e informações</p>
+    </div>
+</div>
+<div class="perfil-wrap">
+    <div class="perfil-card">
+        <div class="avatar">{{ request.user.username|first|upper }}</div>
+        <div class="perfil-nome">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="perfil-usuario">@{{ request.user.username }}</div>
+        <div class="stat-grid">
+            <div class="stat-item">
+                <div class="stat-numero">{{ total }}</div>
+                <div class="stat-label">Total de registros</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-numero">{{ abertos }}</div>
+                <div class="stat-label">Em aberto</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-numero">{{ resolvidos }}</div>
+                <div class="stat-label">Resolvidos</div>
+            </div>
+        </div>
+    </div>
+    <div class="perfil-card">
+        <div class="secao-titulo">Meus registros</div>
+        {% if itens %}
+            {% for item in itens %}
+            <a href="{% url 'detalhe_item' item.pk %}" class="item-linha">
+                <div class="item-linha-icone">
+                    {% if item.tipo == 'perdido' %}🔍{% else %}📦{% endif %}
+                </div>
+                <div style="flex:1">
+                    <div class="item-linha-titulo">{{ item.titulo }}</div>
+                    <div class="item-linha-meta">{{ item.data|date:"d/m/Y" }} • {{ item.localizacao|default:"Sem localização" }}</div>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                    <span class="badge-tipo {% if item.tipo == 'perdido' %}badge-perdido{% else %}badge-encontrado{% endif %}">
+                        {{ item.tipo|capfirst }}
+                    </span>
+                    <span class="badge-tipo {% if item.status == 'aberto' %}badge-aberto{% else %}badge-resolvido{% endif %}">
+                        {{ item.status|capfirst }}
+                    </span>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="sem-itens">
+                <i class="bi bi-inbox"></i>
+                <p>Você ainda não registrou nenhum item.</p>
+                <a href="/itens/novo/" style="color:var(--roxo);font-weight:600">Registrar agora</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
