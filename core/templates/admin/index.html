@@ -1,0 +1,246 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static jazzmin %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block content_title %} {% trans 'Dashboard' %} {% endblock %}
+
+{% block breadcrumbs %}
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active">{% trans 'Home' %}</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% get_side_menu using="app_list" as dashboard_list %}
+{% if dashboard_list %}{% widthratio dashboard_list|length 2 1 as middle %}{% endif %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+.stat-card-dash {
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.stat-icon-dash {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+.stat-num-dash { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat-lbl-dash { font-size: .75rem; opacity: .75; font-weight: 500; }
+
+.rank-table td { padding: 6px 10px; font-size: .85rem; }
+.rank-badge { background: #EDE9FE; color: #6D28D9; font-weight: 700; font-size: .75rem; padding: 2px 9px; border-radius: 999px; }
+
+.prog-bar-bg { background: #e9ecef; border-radius: 999px; height: 9px; overflow: hidden; margin-top: 4px; }
+.prog-bar-fill { height: 100%; border-radius: 999px; }
+</style>
+
+<!-- ── Estatísticas ───────────────────────────────────────── -->
+<div class="col-12 mb-4">
+    <div class="row">
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#EDE9FE;color:#6D28D9"><i class="bi bi-collection"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_itens }}</div>
+                    <div class="stat-lbl-dash">Total de itens</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#DBEAFE;color:#2563EB"><i class="bi bi-search"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_perdidos }}</div>
+                    <div class="stat-lbl-dash">Itens perdidos</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#FCE7F3;color:#DB2777"><i class="bi bi-box-seam"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_encontrados }}</div>
+                    <div class="stat-lbl-dash">Itens encontrados</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#FEF3C7;color:#D97706"><i class="bi bi-hourglass-split"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_abertos }}</div>
+                    <div class="stat-lbl-dash">Em aberto</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#DCFCE7;color:#16A34A"><i class="bi bi-check-circle"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_resolvidos }}</div>
+                    <div class="stat-lbl-dash">Resolvidos</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="stat-card-dash bg-white">
+                <div class="stat-icon-dash" style="background:#F3F4F6;color:#6B7280"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-num-dash">{{ total_usuarios }}</div>
+                    <div class="stat-lbl-dash">Usuários</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barras de progresso -->
+    {% if total_itens > 0 %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="m-0">📈 Taxa de resolução</h5></div>
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between" style="font-size:.82rem">
+                    <span>Resolvidos</span><span>{{ total_resolvidos }}/{{ total_itens }} ({{ pct_resolvidos }}%)</span>
+                </div>
+                <div class="prog-bar-bg">
+                    <div class="prog-bar-fill" style="width:{{ pct_resolvidos }}%;background:linear-gradient(90deg,#16A34A,#22C55E)"></div>
+                </div>
+            </div>
+            <div>
+                <div class="d-flex justify-content-between" style="font-size:.82rem">
+                    <span>Perdidos vs Encontrados</span><span>{{ pct_perdidos }}% perdidos</span>
+                </div>
+                <div class="prog-bar-bg">
+                    <div class="prog-bar-fill" style="width:{{ pct_perdidos }}%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Rankings lado a lado -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header"><h5 class="m-0">🏷️ Categorias com mais itens</h5></div>
+                <div class="card-body p-0">
+                    {% if top_categorias %}
+                    <table class="table table-sm mb-0 rank-table">
+                        {% for cat in top_categorias %}
+                        <tr>
+                            <td>{{ forloop.counter }}. {{ cat.nome }}</td>
+                            <td class="text-end"><span class="rank-badge">{{ cat.total }} item{{ cat.total|pluralize }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p class="p-3 mb-0 text-muted" style="font-size:.85rem">Nenhuma categoria com itens ainda.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header"><h5 class="m-0">📍 Localizações com mais itens</h5></div>
+                <div class="card-body p-0">
+                    {% if top_localizacoes %}
+                    <table class="table table-sm mb-0 rank-table">
+                        {% for loc in top_localizacoes %}
+                        <tr>
+                            <td>{{ forloop.counter }}. {{ loc.nome }}</td>
+                            <td class="text-end"><span class="rank-badge">{{ loc.total }} item{{ loc.total|pluralize }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p class="p-3 mb-0 text-muted" style="font-size:.85rem">Nenhuma localização com itens ainda.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Lista de apps padrão do jazzmin ───────────────────── -->
+<div class="col-lg-9 col-12">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+        {% for app in dashboard_list %}
+            <div class="card mb-3">
+                <div class="card-header"><h5 class="m-0">{{ app.name }}</h5></div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tbody>
+                        {% for model in app.models %}
+                            <tr>
+                                <td>{% if model.url %}<a href="{{ model.url }}">{{ model.name }}</a>{% else %}{{ model.name }}{% endif %}</td>
+                                <td>
+                                    <div class="btn-group float-end">
+                                        {% if model.add_url %}<a href="{{ model.add_url }}" class="btn btn-sm {{ jazzmin_ui.button_classes.success }} addlink">Adicionar</a>{% endif %}
+                                        {% if model.url %}<a href="{{ model.url }}" class="btn btn-sm {{ jazzmin_ui.button_classes.info }} changelink">Ver</a>{% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% if forloop.counter == middle|add:"0" %}</div><div class="col-md-6 col-sm-12">{% endif %}
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-3 col-12">
+    <div id="content-related">
+        <div class="module" id="recent-actions-module">
+            <h4 class="mb-3">{% trans 'Recent actions' %}</h4>
+            {% load log %}
+            {% get_admin_log 6 as admin_log for_user user %}
+            {% if not admin_log %}
+                <p>{% trans 'None available' %}</p>
+            {% else %}
+                <div class="timeline">
+                {% for entry in admin_log %}
+                    <div>
+                        {% if entry.is_change %}<i class="fas fa-edit bg-gray text-xs"></i>
+                        {% elif entry.is_deletion %}<i class="fas fa-trash bg-danger text-xs"></i>
+                        {% elif entry.is_addition %}<i class="fas fa-plus-circle bg-success text-xs"></i>
+                        {% endif %}
+                        <div class="timeline-item">
+                            <span class="time"><i class="fas fa-clock"></i> {{ entry.action_time|timesince }} ago</span>
+                            <h3 class="timeline-header">
+                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                    {{ entry.object_repr }}
+                                {% else %}
+                                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                {% endif %}
+                            </h3>
+                            <div class="timeline-body">{{ entry.content_type.app_label }} - {{ entry.content_type.name }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
